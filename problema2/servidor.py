@@ -6,39 +6,30 @@ Objetivo: Crear un servidor TCP que devuelva exactamente lo que recibe del clien
 
 import socket
 
-# TODO: Definir la dirección y puerto del servidor
+HOST = 'localhost' 
+PORT = 10000
 
-# TODO: Crear un socket TCP/IP
-# AF_INET: socket de familia IPv4
-# SOCK_STREAM: socket de tipo TCP (orientado a conexión)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind((HOST, PORT))
+sock.listen(1)
 
-# TODO: Enlazar el socket a la dirección y puerto especificados
-
-# TODO: Poner el socket en modo escucha
-# El parámetro define el número máximo de conexiones en cola
-
-# Bucle infinito para manejar múltiples conexiones (una a la vez)
 while True:
 
     print("Servidor a la espera de conexiones ...")
-    
-    # TODO: Aceptar una conexión entrante
-    # accept() bloquea hasta que llega una conexión
-    # conn: nuevo socket para comunicarse con el cliente
-    # addr: dirección y puerto del cliente
-    
+
+    conn, addr = sock.accept()
     print(f"Conexión realizada por {addr}")
 
-    # TODO: Recibir datos del cliente (hasta 1024 bytes)
-    
-    # Si no se reciben datos, salir del bucle
-    if not data:
-        break
+    try:
+        data = conn.recv(1024)
+        if not data:
+            print("No se recibieron datos. Cerrando conexión.")
+            continue
 
-    # Mostrar los datos recibidos (en formato bytes)
-    print("Datos recibidos:", data)
+        # Mostrar los datos recibidos (en formato bytes)
+        print("Datos recibidos:", data)
     
-    # TODO: Enviar los mismos datos de vuelta al cliente (echo)
-    
-    # TODO: Cerrar la conexión con el cliente actual
+        conn.sendall(data)  # Enviar de vuelta los mismos datos al cliente
 
+    finally:
+        conn.close()
